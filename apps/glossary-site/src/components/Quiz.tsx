@@ -186,17 +186,18 @@ function Setup({
                 {n}
               </button>
             ))}
-          {max > 50 || ![10, 20, 50].includes(max) ? null : null}
-          <button
-            onClick={() => setCount(max)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-              safeCount === max && ![10, 20, 50].includes(max)
-                ? "gradient-solana text-black"
-                : "bg-[#1A1A24] text-[#A0A0B0] border border-white/8 hover:text-white"
-            }`}
-          >
-            Todos ({max})
-          </button>
+          {![10, 20, 50].includes(max) && (
+            <button
+              onClick={() => setCount(max)}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                safeCount === max
+                  ? "gradient-solana text-black"
+                  : "bg-[#1A1A24] text-[#A0A0B0] border border-white/8 hover:text-white"
+              }`}
+            >
+              Todos ({max})
+            </button>
+          )}
         </div>
         <p className="text-xs text-[#A0A0B0]">
           {pool.length} termos disponíveis
@@ -236,7 +237,7 @@ function MultipleChoice({
 
   function next() {
     if (idx + 1 >= questions.length) {
-      onDone(score + (selected === q.correctIndex ? 1 : 0));
+      onDone(score);
     } else {
       setIdx((i) => i + 1);
       setSelected(null);
@@ -343,7 +344,7 @@ function Flashcard({
 
   const term = terms[idx];
   const catColor = CATEGORY_COLORS[term.category] ?? "#9945FF";
-  const progress = (idx / terms.length) * 100;
+  const progress = ((idx + 1) / terms.length) * 100;
 
   function respond(didKnow: boolean) {
     const newKnown = known + (didKnow ? 1 : 0);

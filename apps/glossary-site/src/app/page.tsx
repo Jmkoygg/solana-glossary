@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { allTerms, getCategories } from "@stbr/solana-glossary";
+import { getCategories } from "@stbr/solana-glossary";
 import type { GlossaryTerm, Category } from "@stbr/solana-glossary";
 import { useLocale } from "@/hooks/useLocale";
 import { getAllTermsLocalized, searchTermsLocalized } from "@/lib/i18n";
@@ -16,8 +16,6 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
-  const [displayedTerms, setDisplayedTerms] =
-    useState<GlossaryTerm[]>(allTerms);
 
   const categories = getCategories();
 
@@ -31,25 +29,15 @@ export default function HomePage() {
     return counts;
   }, [localizedTerms]);
 
-  const applyFilters = useCallback(
-    (q: string, cat: Category | null, terms: GlossaryTerm[]) => {
-      let results: GlossaryTerm[];
-      if (q.trim()) {
-        results = searchTermsLocalized(q.trim(), locale);
-      } else {
-        results = terms;
-      }
-      if (cat) {
-        results = results.filter((t) => t.category === cat);
-      }
-      setDisplayedTerms(results);
-    },
-    [locale],
-  );
-
-  useEffect(() => {
-    applyFilters(query, selectedCategory, localizedTerms);
-  }, [query, selectedCategory, localizedTerms, applyFilters]);
+  const displayedTerms = useMemo(() => {
+    let results = query.trim()
+      ? searchTermsLocalized(query.trim(), locale)
+      : localizedTerms;
+    if (selectedCategory) {
+      results = results.filter((t) => t.category === selectedCategory);
+    }
+    return results;
+  }, [query, selectedCategory, localizedTerms, locale]);
 
   function handleRandom() {
     const term =

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const VISITED_KEY = "solana-glossary-visited";
 
-export function markVisited(termId: string) {
+function markVisited(termId: string) {
   try {
     const visited = new Set<string>(
       JSON.parse(localStorage.getItem(VISITED_KEY) ?? "[]"),
