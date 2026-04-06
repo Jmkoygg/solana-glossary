@@ -1,6 +1,6 @@
 # Glossário Solana — Web App
 
-> **[🚀 Live Demo](https://glossario-solana.vercel.app)** · Built on top of [`@stbr/solana-glossary`](https://github.com/solanabr/solana-glossary) for the Superteam Brazil Bounty
+> **[🚀 Live Demo](https://solana-glossary-lek6.vercel.app)** · Built on top of [`@stbr/solana-glossary`](https://github.com/solanabr/solana-glossary) for the Superteam Brazil Bounty
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.2-black?logo=next.js)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://typescriptlang.org)
@@ -200,7 +200,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-**Or jump straight to the live demo:** [glossario-solana.vercel.app](https://glossario-solana.vercel.app)
+**Or jump straight to the live demo:** [solana-glossary-lek6.vercel.app](https://solana-glossary-lek6.vercel.app)
 
 ---
 
