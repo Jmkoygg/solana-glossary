@@ -18,9 +18,28 @@ export async function generateMetadata({
   const { id } = await params;
   const term = getTerm(id);
   if (!term) return {};
+
+  const title = `${term.term} | Glossário Solana`;
+  const description = term.definition.slice(0, 160);
+  const ogImageUrl = `${SITE_URL}/termo/${id}/opengraph-image`;
+
   return {
-    title: `${term.term} | Glossário Solana`,
-    description: term.definition.slice(0, 160),
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/termo/${id}`,
+      siteName: "Glossário Solana",
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: term.term }],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImageUrl],
+    },
   };
 }
 
