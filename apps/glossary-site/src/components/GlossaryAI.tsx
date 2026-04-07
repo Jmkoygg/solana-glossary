@@ -41,7 +41,7 @@ export default function GlossaryAI({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [unavailable, setUnavailable] = useState(false);
+  const [_unavailable, _setUnavailable] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -72,8 +72,13 @@ export default function GlossaryAI({
       });
 
       if (res.status === 503) {
-        setUnavailable(true);
-        setMessages((m) => m.slice(0, -1));
+        setMessages((m) => [
+          ...m,
+          {
+            role: "ai",
+            text: "⚙️ IA não configurada neste ambiente. Adicione GEMINI_API_KEY nas variáveis de ambiente.",
+          },
+        ]);
         setLoading(false);
         return;
       }
@@ -103,8 +108,6 @@ export default function GlossaryAI({
       setLoading(false);
     }
   }
-
-  if (unavailable) return null;
 
   return (
     <div className="rounded-xl border border-white/8 overflow-hidden">
