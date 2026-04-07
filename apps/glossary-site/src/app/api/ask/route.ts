@@ -55,23 +55,45 @@ RULES:
 - Be practical and builder-focused — avoid vague theory
 - If you don't know, say so; never hallucinate program addresses or API signatures`;
 
-  const body = {
-    systemInstruction: { parts: [{ text: systemPrompt }] },
-    contents: [{ role: "user", parts: [{ text: question }] }],
-    generationConfig: { maxOutputTokens: 350, temperature: 0.6 },
-  };
+  // Try models in order: newest first, fall back if unavailable
+  const models = [
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-8b",
+  ];
 
-  const geminiRes = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    },
-  );
+  let geminiRes: Response | null = null;
+  let lastError = "";
 
-  if (!geminiRes.ok) {
-    return NextResponse.json({ error: "AI_ERROR" }, { status: 500 });
+  for (const model of models) {
+    const body = {
+      systemInstruction: { parts: [{ text: systemPrompt }] },
+      contents: [{ role: "user", parts: [{ text: question }] }],
+      generationConfig: { maxOutputTokens: 350, temperature: 0.6 },
+    };
+
+    geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      },
+    );
+
+    if (geminiRes.ok) break;
+
+    const errBody = await geminiRes.text();
+    lastError = `${model}: ${geminiRes.status} ${errBody.slice(0, 200)}`;
+    geminiRes = null;
+  }
+
+  if (!geminiRes) {
+    console.error("All Gemini models failed:", lastError);
+    return NextResponse.json(
+      { error: "AI_ERROR", detail: lastError },
+      { status: 500 },
+    );
   }
 
   const data = await geminiRes.json();

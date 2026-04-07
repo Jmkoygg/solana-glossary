@@ -84,12 +84,11 @@ export default function GlossaryAI({
       }
 
       if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        const detail = errData.detail ? `\n\n${errData.detail}` : "";
         setMessages((m) => [
           ...m,
-          {
-            role: "ai",
-            text: "Erro na API. Verifique se GEMINI_API_KEY está configurado no Vercel.",
-          },
+          { role: "ai", text: `Erro Gemini (${res.status}).${detail}` },
         ]);
         setLoading(false);
         return;
